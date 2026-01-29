@@ -1,7 +1,7 @@
 from fastapi import FastAPI, UploadFile
 from contextlib import asynccontextmanager
 from pydantic import BaseModel
-
+from src.ingest import ingest_pdf
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -26,6 +26,7 @@ async def upload_file(file: UploadFile = None):
         return {"message": "Please upload a PDF file"}
     
     try:
+        await ingest_pdf(file)
         return {"message": "File processed successfully"}
     except Exception as e:
         return {"message": f"Error processing file: {str(e)}"}
