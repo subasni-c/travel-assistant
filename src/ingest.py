@@ -4,6 +4,7 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.docstore.document import Document
 from src.config import COLLECTION_NAME
 from src.embeddings import get_embeddings
+from src.vectorstores import get_qdrant_client
 
 async def ingest_pdf(file: UploadFile):
     print(f"📄 Processing PDF file: {file.filename}")
@@ -36,4 +37,20 @@ async def ingest_pdf(file: UploadFile):
     texts = [chunk.page_content for chunk in chunks]
     embeddings = get_embeddings(texts)
 
-    return  embeddings
+     # Get the Qdrant client
+    client = get_qdrant_client()
+
+    # Prepare payloads
+    payloads = [{"text": chunk.page_content, **chunk.metadata} for chunk in chunks]
+
+    # Upload points
+    print(f"⬆️ Uploading {len(chunks)} documents to collection '{COLLECTION_NAME}'...")
+    client.upload_collection(
+        collection_name=COLLECTION_NAME,
+        vectors=embeddings,
+        payload=payloads,
+    )
+    print(f"✅ Upload complete! Added {len(chunks)} chunks from {page_count} pages")
+
+
+
