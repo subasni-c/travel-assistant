@@ -3,7 +3,7 @@ from contextlib import asynccontextmanager
 from pydantic import BaseModel
 from src.ingest import ingest_pdf
 from src.vectorstores import init_qdrant
-from src.retriever import retrieve_docs
+from src.generator import generate_answer
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -20,8 +20,8 @@ class QueryRequest(BaseModel):
 
 @app.post("/ask")
 async def ask_question(req: QueryRequest):  
-    res= retrieve_docs(req.query)
-    return {"response": res}
+    generate_answer(req.query)
+    return {"response": "success"}
 
 @app.post("/upload")
 async def upload_file(file: UploadFile = None):
