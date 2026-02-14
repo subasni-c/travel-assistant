@@ -20,8 +20,8 @@ class QueryRequest(BaseModel):
 
 @app.post("/ask")
 async def ask_question(req: QueryRequest):  
-    generate_answer(req.query)
-    return {"response": "success"}
+    resp = generate_answer(req.query)
+    return {"response": resp}
 
 @app.post("/upload")
 async def upload_file(file: UploadFile = None):
