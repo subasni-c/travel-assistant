@@ -57,4 +57,4 @@ def generate_answer(query: str) -> str:
     if MODEL_PROVIDER == "openai":
         #print(result.content)
         return result.content
-    return result
+    return str(result)
